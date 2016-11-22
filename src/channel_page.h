@@ -32,6 +32,7 @@ public:
     ChannelPage(RoomView&, Channel&);
 
     void set_current();
+    bool is_current() const;
 
     void display(const std::string& username, const std::string& message);
 
@@ -90,6 +91,12 @@ ChannelPage::ChannelPage(RoomView& room_view, Channel& channel)
 }
 
 inline
+bool ChannelPage::is_current() const
+{
+    return _room_view.current_channel_page() == this;
+}
+
+inline
 void ChannelPage::display(const std::string& sender, const std::string& message)
 {
     /* Temporarily tell pidgin to use different imhtml for output.  */
@@ -108,6 +115,11 @@ void ChannelPage::display(const std::string& sender, const std::string& message)
                              message.c_str(),
                              PURPLE_MESSAGE_RECV,
                              time(NULL));
+
+    if (!is_current()) {
+        std::cout << "notify" << std::endl;
+        _tab->notify();
+    }
 }
 
 inline

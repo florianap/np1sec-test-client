@@ -91,6 +91,13 @@ PluginToggleButton::PluginToggleButton(PurpleConversation* conv)
 inline
 void PluginToggleButton::on_click(GtkWidget*, PluginToggleButton* self)
 {
+    //auto conv = self->_conv;
+    //auto pc = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, conv->account, conv->name);
+    //int id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
+	//purple_conv_chat_set_id(PURPLE_CONV_CHAT(pc), id);
+    ////self->_conv->ui_ops->create_conversation(pc);
+
+    return;
     if (self->_toggleable) {
         if (self->room) {
             purple_prefs_set_bool(self->prefs_str().c_str(), false);
