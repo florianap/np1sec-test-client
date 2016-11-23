@@ -78,8 +78,14 @@ extern "C" {
 #define _(x) const_cast<char*>(x)
 
 //------------------------------------------------------------------------------
+static void signed_on_cb(PurpleConnection *conn, void*)
+{
+    std::cout << "signed on " << conn->account->ui_data << std::endl;
+}
+
 static void conversation_created_cb(PurpleConversation *conv)
 {
+    std::cout << "created "  << std::endl;
     if (!is_chat(conv)) return;
 
     auto* tb = new ToggleButton(conv);
@@ -147,8 +153,10 @@ static void setup_purple_callbacks(PurplePlugin* plugin)
     g_signals_connected = true;
 
     void* conv_handle = purple_conversations_get_handle();
+    void* conn_handle = purple_connections_get_handle();
 
 	purple_signal_connect(conv_handle, "chat-buddy-left", plugin, PURPLE_CALLBACK(chat_buddy_left_cb), NULL);
+    purple_signal_connect(conn_handle, "signed-on", plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
     purple_signal_connect(conv_handle, "conversation-created", plugin, PURPLE_CALLBACK(conversation_created_cb), NULL);
     purple_signal_connect(conv_handle, "deleting-conversation", plugin, PURPLE_CALLBACK(deleting_conversation_cb), NULL);
     purple_signal_connect(conv_handle, "receiving-chat-msg", plugin, PURPLE_CALLBACK(receiving_chat_msg_cb), NULL);
@@ -161,8 +169,10 @@ static void disconnect_purple_callbacks(PurplePlugin* plugin)
     g_signals_connected = false;
 
     void* conv_handle = purple_conversations_get_handle();
+    void* conn_handle = purple_connections_get_handle();
 
 	purple_signal_disconnect(conv_handle, "chat-buddy-left", plugin, PURPLE_CALLBACK(chat_buddy_left_cb));
+    purple_signal_disconnect(conn_handle, "signed-on", plugin, PURPLE_CALLBACK(signed_on_cb));
     purple_signal_disconnect(conv_handle, "conversation-created", plugin, PURPLE_CALLBACK(conversation_created_cb));
     purple_signal_disconnect(conv_handle, "deleting-conversation", plugin, PURPLE_CALLBACK(deleting_conversation_cb));
     purple_signal_disconnect(conv_handle, "receiving-chat-msg", plugin, PURPLE_CALLBACK(receiving_chat_msg_cb));

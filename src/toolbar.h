@@ -30,6 +30,7 @@ public:
         friend class Toolbar;
 
         Button(GtkBox*, const char* label);
+        ~Button();
 
         GtkWidget* _button_widget;
         std::function<void()> _on_click;
@@ -39,16 +40,14 @@ public:
 public:
     Toolbar(PidginConversation*);
 
-    std::unique_ptr<Button> create_channel_button;
-    std::unique_ptr<Button> search_channel_button;
+    void add_button(const std::string&, std::function<void()>);
 
     ~Toolbar();
 
 private:
     PidginConversation* _gtkconv;
     GtkWidget* _toolbar_box;
-    GtkWidget* _create_channel_button;
-    GtkWidget* _search_channel_button;
+    std::map<std::string, std::unique_ptr<Button>> _buttons;
 };
 
 //------------------------------------------------------------------------------
@@ -63,6 +62,11 @@ inline Toolbar::Button::Button(GtkBox* box, const char* label)
 
     gtk_signal_connect(GTK_OBJECT(_button_widget), "clicked"
             , GTK_SIGNAL_FUNC(on_clicked), this);
+}
+
+inline Toolbar::Button::~Button()
+{
+    gtk_
 }
 
 inline void Toolbar::Button::on_click(std::function<void()> f)
@@ -95,6 +99,13 @@ inline Toolbar::Toolbar(PidginConversation* gtkconv)
 
     create_channel_button.reset(new Button(GTK_BOX(_toolbar_box), "Create channel"));
     search_channel_button.reset(new Button(GTK_BOX(_toolbar_box), "Search channels"));
+}
+
+inline Toolbar::add_button(const std::string& text, std::function<void()> f)
+{
+    auto& b = _buttons[text];
+    b.reset(new Button(GTK_BOX(_toolbar_box), text.c_str()));
+    b->on_click(std::move(f));
 }
 
 inline Toolbar::~Toolbar()

@@ -140,9 +140,12 @@ Room::Room(PurpleConversation* conv)
 inline
 void Room::start()
 {
+    std::cout << "Room::start" << std::endl;
     if (started()) return;
 
     _room.reset(new Np1SecRoom(this, _username, _private_key));
+
+    _room->search_channels();
 }
 
 inline
@@ -292,8 +295,6 @@ inline
 np1sec::ChannelInterface*
 Room::new_channel(np1sec::Channel* channel)
 {
-    _toolbar.reset();
-
     inform("Room::new_channel(", size_t(channel),
            ") with participants: ", channel->users());
 
